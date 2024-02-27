@@ -20,74 +20,42 @@
 
 package org.smslib.helper;
 
-import java.io.File;
-import org.apache.log4j.Level;
-import org.apache.log4j.PropertyConfigurator;
+public class Logger {
+    private static Logger logger = new Logger();
 
-public class Logger
-{
-	private static Logger logger = new Logger();
+    public static Logger getInstance() {
+        return logger;
+    }
 
-	org.apache.log4j.Logger log4jLogger;
+    public void logInfo(String message, Exception e, String gatewayId) {
+        System.out.println(formatMessage(message, gatewayId));
+        if (e != null){
+            e.printStackTrace();
+        }
+    }
 
-	private static final String FQCN = Logger.class.getName();
+    public void logWarn(String message, Exception e, String gatewayId) {
+        System.out.println(formatMessage(message, gatewayId));
+        if (e!= null){
+            e.printStackTrace();
+        }
+    }
 
-	protected Logger()
-	{
-		if (System.getProperties().getProperty("java.vm.name").equalsIgnoreCase("ikvm.net"))
-		{
-			File f = new File("log4j.properties");
-			if (!f.exists()) log4jLogger = null;
-			else
-			{
-				log4jLogger = org.apache.log4j.Logger.getLogger("smslib");
-				PropertyConfigurator.configure("log4j.properties");
-			}
-		}
-		else
-		{
-			log4jLogger = org.apache.log4j.Logger.getLogger("smslib");
-			//PropertyConfigurator.configure("log4j.properties");
-		}
-	}
+    public void logDebug(String message, Exception e, String gatewayId) {
+//        System.err.println(formatMessage(message, gatewayId));
+//        if (e!= null){
+//            e.printStackTrace();
+//        }
+    }
 
-	public static Logger getInstance()
-	{
-		if (Logger.logger == null) Logger.logger = new Logger();
-		return Logger.logger;
-	}
+    public void logError(String message, Exception e, String gatewayId) {
+        System.err.println(formatMessage(message, gatewayId));
+        if (e!= null){
+            e.printStackTrace();
+        }
+    }
 
-	public static void setInstance(Logger logger)
-	{
-		Logger.logger = logger;
-	}
-
-	public void logInfo(String message, Exception e, String gatewayId)
-	{
-		if (log4jLogger == null) return;
-		log4jLogger.log(FQCN, Level.INFO, formatMessage(message, gatewayId), e);
-	}
-
-	public void logWarn(String message, Exception e, String gatewayId)
-	{
-		if (log4jLogger == null) return;
-		log4jLogger.log(FQCN, Level.WARN, formatMessage(message, gatewayId), e);
-	}
-
-	public void logDebug(String message, Exception e, String gatewayId)
-	{
-		if (log4jLogger == null) return;
-		log4jLogger.log(FQCN, Level.DEBUG, formatMessage(message, gatewayId), e);
-	}
-
-	public void logError(String message, Exception e, String gatewayId)
-	{
-		if (log4jLogger == null) return;
-		log4jLogger.log(FQCN, Level.ERROR, formatMessage(message, gatewayId), e);
-	}
-
-	private String formatMessage(String message, String gatewayId)
-	{
-		return ((gatewayId == null) ? message : "GTW: " + gatewayId + ": " + message);
-	}
+    private String formatMessage(String message, String gatewayId) {
+        return (gatewayId == null) ? message : "GTW: " + gatewayId + ": " + message;
+    }
 }
