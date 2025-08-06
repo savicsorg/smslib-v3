@@ -43,12 +43,7 @@ import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.extra.SessionState;
-import org.jsmpp.session.BindParameter;
-import org.jsmpp.session.DataSmResult;
-import org.jsmpp.session.MessageReceiverListener;
-import org.jsmpp.session.SMPPSession;
-import org.jsmpp.session.Session;
-import org.jsmpp.session.SessionStateListener;
+import org.jsmpp.session.*;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
 import org.smslib.AGateway;
 import org.smslib.GatewayException;
@@ -324,8 +319,9 @@ public class JSMPPGateway extends AbstractSMPPGateway
 		{
 			final RegisteredDelivery registeredDelivery = new RegisteredDelivery();
 			registeredDelivery.setSMSCDeliveryReceipt((msg.getStatusReport()) ? SMSCDeliveryReceipt.SUCCESS_FAILURE : SMSCDeliveryReceipt.DEFAULT);
-			String msgId = session.submitShortMessage(bindAttributes.getSystemType(), TypeOfNumber.valueOf(sourceAddress.getTypeOfNumber().value()), NumberingPlanIndicator.valueOf(sourceAddress.getNumberingPlanIndicator().value()), (msg.getFrom() != null) ? msg.getFrom() : getFrom(), TypeOfNumber.valueOf(destinationAddress.getTypeOfNumber().value()), NumberingPlanIndicator.valueOf(destinationAddress.getNumberingPlanIndicator().value()), msg.getRecipient(), new ESMClass(), (byte) 0, (byte) msg.getPriority(), null, formatTimeFromHours(msg.getValidityPeriod()), registeredDelivery, (byte) 0, dataCoding, (byte) 0, msg.getText().getBytes());
-			msg.setRefNo(msgId);
+			//String msgId = session.submitShortMessage(bindAttributes.getSystemType(), TypeOfNumber.valueOf(sourceAddress.getTypeOfNumber().value()), NumberingPlanIndicator.valueOf(sourceAddress.getNumberingPlanIndicator().value()), (msg.getFrom() != null) ? msg.getFrom() : getFrom(), TypeOfNumber.valueOf(destinationAddress.getTypeOfNumber().value()), NumberingPlanIndicator.valueOf(destinationAddress.getNumberingPlanIndicator().value()), msg.getRecipient(), new ESMClass(), (byte) 0, (byte) msg.getPriority(), null, formatTimeFromHours(msg.getValidityPeriod()), registeredDelivery, (byte) 0, dataCoding, (byte) 0, msg.getText().getBytes());
+			SubmitSmResult msgId = session.submitShortMessage(bindAttributes.getSystemType(), TypeOfNumber.valueOf(sourceAddress.getTypeOfNumber().value()), NumberingPlanIndicator.valueOf(sourceAddress.getNumberingPlanIndicator().value()), (msg.getFrom() != null) ? msg.getFrom() : getFrom(), TypeOfNumber.valueOf(destinationAddress.getTypeOfNumber().value()), NumberingPlanIndicator.valueOf(destinationAddress.getNumberingPlanIndicator().value()), msg.getRecipient(), new ESMClass(), (byte) 0, (byte) msg.getPriority(), null, formatTimeFromHours(msg.getValidityPeriod()), registeredDelivery, (byte) 0, dataCoding, (byte) 0, msg.getText().getBytes());
+			msg.setRefNo(msgId.getMessageId());
 			msg.setDispatchDate(new Date());
 			msg.setGatewayId(getGatewayId());
 			msg.setMessageStatus(MessageStatuses.SENT);
