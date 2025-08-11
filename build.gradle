@@ -50,7 +50,7 @@ dependencies {
     // Logging (choose one)
     implementation 'org.slf4j:slf4j-api:2.0.9'
 
-    // Common utilities compatible with Java 21
+    // Common utilities compatible with Java 17
     implementation 'com.google.guava:guava:32.1.3-jre'
     implementation 'org.apache.commons:commons-lang3:3.18.0'
 }
@@ -68,7 +68,7 @@ tasks.withType(JavaCompile).configureEach {
     // options.compilerArgs += ['--module-path', classpath.asPath]
 }
 
-// Configure test execution with Java 21 and ALL JavaFX modules
+// Configure test execution with Java 17 and ALL JavaFX modules
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
 
