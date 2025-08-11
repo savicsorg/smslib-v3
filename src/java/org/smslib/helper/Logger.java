@@ -22,8 +22,10 @@ package org.smslib.helper;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -33,6 +35,10 @@ public class Logger {
     public final String USER_DIR = System.getProperty("user.dir");
     public final String COMMON_APP_DATA_FOLDER = (System.getProperty("os.name").contains("XP")) ? "Documents and Settings" + FILE_SEP + "All Users" + FILE_SEP + "Application Data" : "ProgramData";
     public final String USER_HOME = System.getenv("SystemDrive") + FILE_SEP + COMMON_APP_DATA_FOLDER;
+    
+    private static final String PROPERTIES_FILE = "Texto.properties";
+    private static final String LOG_LEVEL_KEY = "log.level";
+    private static final String DEFAULT_LOG_LEVEL = "INFO";
     
     private static Logger logger = new Logger();
 
@@ -46,7 +52,7 @@ public class Logger {
             //throw new IllegalArgumentException("Properties cannot be null");
             System.out.println("Properties cannot be null");
         }
-        String logLevelStr = properties.getProperty("log.level").toUpperCase();
+        String logLevelStr = properties.getProperty(LOG_LEVEL_KEY).toUpperCase();
         if (logLevelStr.equals("INFO")) { 
             System.out.println(formatMessage(message, gatewayId));
             if (e != null){
@@ -61,7 +67,7 @@ public class Logger {
             //throw new IllegalArgumentException("Properties cannot be null");
             System.out.println("Properties cannot be null");
         }
-        String logLevelStr = properties.getProperty("log.level").toUpperCase();
+        String logLevelStr = properties.getProperty(LOG_LEVEL_KEY).toUpperCase();
         if (logLevelStr.equals("WARNING")) { 
             System.out.println(formatMessage(message, gatewayId));
             if (e!= null){
@@ -76,7 +82,7 @@ public class Logger {
             //throw new IllegalArgumentException("Properties cannot be null");
             System.out.println("Properties cannot be null");
         }
-        String logLevelStr = properties.getProperty("log.level").toUpperCase();
+        String logLevelStr = properties.getProperty(LOG_LEVEL_KEY).toUpperCase();
         if (logLevelStr.equals("DEBUG")) { 
             System.err.println(formatMessage(message, gatewayId));
             if (e!= null){
@@ -91,7 +97,7 @@ public class Logger {
             //throw new IllegalArgumentException("Properties cannot be null");
             System.out.println("Properties cannot be null");
         }
-        String logLevelStr = properties.getProperty("log.level").toUpperCase();
+        String logLevelStr = properties.getProperty(LOG_LEVEL_KEY).toUpperCase();
         if (logLevelStr.equals("ERROR")) { 
             System.err.println(formatMessage(message, gatewayId));
             if (e!= null){
@@ -105,7 +111,7 @@ public class Logger {
     }
     
     public Properties getTextoPropertiesValues() {
-        String file = "Texto.properties";
+        String file = PROPERTIES_FILE;
         String directory = USER_HOME + FILE_SEP + "Savics" + FILE_SEP + "DataToCare" + FILE_SEP + "Biopics" + FILE_SEP + "Biopics";
         String location = directory + FILE_SEP + file;
         try {
@@ -145,7 +151,30 @@ public class Logger {
                 }
             }
         }
+        
+        if (properties == null || !properties.containsKey(LOG_LEVEL_KEY)) {
+            // properties is null or log.level not found
+            if (properties == null) {
+                properties = new Properties();
+            }
+            
+            // we add the log.level value in the properties
+            properties.setProperty(LOG_LEVEL_KEY, DEFAULT_LOG_LEVEL);
+            
+            // we saved the properties
+            saveProperties(properties);
+        }
+        
         return properties;
+    }
+    
+    private void saveProperties(Properties properties) {
+        try (OutputStream output = new FileOutputStream(PROPERTIES_FILE)) { // Pas de append=true
+            properties.store(output, "Configuration properties");
+            System.out.println("Property " + LOG_LEVEL_KEY + " added to " + PROPERTIES_FILE);
+        } catch (IOException e) {
+            System.err.println("Error during the overwrite of Texto.properties: " + e.getMessage());
+        }
     }
     
 }
